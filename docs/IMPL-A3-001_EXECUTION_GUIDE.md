@@ -20,3 +20,4 @@ The workflow executes:
 4. Vitest tests.
 
 Runtime test status must be taken from the actual GitHub Actions result. The repository is not production-ready.
+
