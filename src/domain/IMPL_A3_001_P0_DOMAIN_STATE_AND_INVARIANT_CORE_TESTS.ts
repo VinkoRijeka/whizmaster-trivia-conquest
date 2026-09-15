@@ -4,7 +4,8 @@ import {
   levelForDevelopmentPoints,
   validateMatchState,
   type TestFixtureInput,
-} from './IMPL_A3_001_P0_DOMAIN_STATE_AND_INVARIANT_CORE';
+  type ValidationIssue,
+} from './IMPL_A3_001_P0_DOMAIN_STATE_AND_INVARIANT_CORE.js';
 
 const adjacency: Record<string, string[]> = {
   t_a_home: ['t_center', 't_a_west', 't_a_north', 't_block_a', 't_edge_a'],
@@ -19,29 +20,33 @@ const adjacency: Record<string, string[]> = {
   t_edge_b: ['t_b_home'],
 };
 
+type FixtureTile = [string, 'playerA' | 'playerB' | 'neutral', 'empty' | 'occupied', string | null, 1 | 2 | 3];
+
+const fixtureTiles: FixtureTile[] = [
+  ['t_center', 'neutral', 'empty', null, 2],
+  ['t_a_home', 'playerA', 'occupied', 'unit_a1', 1],
+  ['t_a_west', 'playerA', 'empty', null, 1],
+  ['t_a_north', 'playerA', 'occupied', 'unit_a3', 1],
+  ['t_b_home', 'playerB', 'occupied', 'unit_b1', 1],
+  ['t_b_east', 'playerB', 'occupied', 'unit_b2', 1],
+  ['t_b_north', 'playerB', 'occupied', 'unit_b3', 2],
+  ['t_block_a', 'playerA', 'occupied', 'unit_a2', 1],
+  ['t_edge_a', 'playerA', 'empty', null, 1],
+  ['t_edge_b', 'playerB', 'empty', null, 1],
+];
+
 const fixture: TestFixtureInput = {
   fixtureId: 'p0-test-core-001',
   rulesetVersion: 'P0-baseline-candidate',
   matchId: 'match-test-001',
   initialPlayer: 'playerA',
-  tiles: [
-    ['t_center', 'neutral', 'empty', null, 2],
-    ['t_a_home', 'playerA', 'occupied', 'unit_a1', 1],
-    ['t_a_west', 'playerA', 'empty', null, 1],
-    ['t_a_north', 'playerA', 'empty', null, 1],
-    ['t_b_home', 'playerB', 'occupied', 'unit_b1', 1],
-    ['t_b_east', 'playerB', 'empty', null, 1],
-    ['t_b_north', 'playerB', 'empty', null, 2],
-    ['t_block_a', 'playerA', 'occupied', 'unit_a2', 1],
-    ['t_edge_a', 'playerA', 'empty', null, 1],
-    ['t_edge_b', 'playerB', 'empty', null, 1],
-  ].map(([tileId, ownership, occupancy, occupantUnitId, difficultyLevel]) => ({
+  tiles: fixtureTiles.map(([tileId, ownership, occupancy, occupantUnitId, difficultyLevel]) => ({
     tileId,
-    ownership: ownership as 'playerA' | 'playerB' | 'neutral',
-    occupancy: occupancy as 'empty' | 'occupied',
-    occupantUnitId: occupantUnitId as string | null,
+    ownership,
+    occupancy,
+    occupantUnitId,
     neighborTileIds: adjacency[tileId],
-    difficultyLevel: difficultyLevel as 1 | 2 | 3,
+    difficultyLevel,
     isTestOnly: true,
   })),
   units: [
@@ -70,7 +75,7 @@ describe('IMPL-A3-001 domain state invariants', () => {
   it('accepts the deterministic fixture', () => {
     const state = initializeMatchState(fixture);
     const valid = validateMatchState(state);
-    assert(valid.valid, `fixture should be valid: ${valid.issues.map((issue) => issue.code).join(', ')}`);
+    assert(valid.valid, `fixture should be valid: ${valid.issues.map((issue: ValidationIssue) => issue.code).join(', ')}`);
   });
 
   it('rejects ownership mismatch', () => {
