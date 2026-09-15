@@ -15,12 +15,24 @@ const adjacency: Record<string, string[]> = {
   t_edge_b: ['t_b_home'],
 };
 
+type FixtureTile = [string, 'playerA' | 'playerB' | 'neutral', 'empty' | 'occupied', string | null, 1 | 2 | 3];
+
+const fixtureTiles: FixtureTile[] = [
+  ['t_center', 'neutral', 'empty', null, 2],
+  ['t_a_home', 'playerA', 'occupied', 'unit_a1', 1],
+  ['t_a_west', 'playerA', 'empty', null, 1],
+  ['t_a_north', 'playerA', 'occupied', 'unit_a3', 1],
+  ['t_b_home', 'playerB', 'occupied', 'unit_b1', 1],
+  ['t_b_east', 'playerB', 'occupied', 'unit_b2', 1],
+  ['t_b_north', 'playerB', 'occupied', 'unit_b3', 2],
+  ['t_block_a', 'playerA', 'occupied', 'unit_a2', 1],
+  ['t_edge_a', 'playerA', 'empty', null, 1],
+  ['t_edge_b', 'playerB', 'empty', null, 1],
+];
+
 const fixture: TestFixtureInput = {
   fixtureId: 'p0-test-core-001', rulesetVersion: 'P0-baseline-candidate', matchId: 'match-test-001', initialPlayer: 'playerA',
-  tiles: [
-    ['t_center', 'neutral', 'empty', null, 2], ['t_a_home', 'playerA', 'occupied', 'unit_a1', 1], ['t_a_west', 'playerA', 'empty', null, 1], ['t_a_north', 'playerA', 'occupied', 'unit_a3', 1],
-    ['t_b_home', 'playerB', 'occupied', 'unit_b1', 1], ['t_b_east', 'playerB', 'occupied', 'unit_b2', 1], ['t_b_north', 'playerB', 'occupied', 'unit_b3', 2], ['t_block_a', 'playerA', 'occupied', 'unit_a2', 1], ['t_edge_a', 'playerA', 'empty', null, 1], ['t_edge_b', 'playerB', 'empty', null, 1],
-  ].map(([tileId, ownership, occupancy, occupantUnitId, difficultyLevel]) => ({ tileId, ownership, occupancy, occupantUnitId, neighborTileIds: adjacency[tileId], difficultyLevel, isTestOnly: true })),
+  tiles: fixtureTiles.map(([tileId, ownership, occupancy, occupantUnitId, difficultyLevel]) => ({ tileId, ownership, occupancy, occupantUnitId, neighborTileIds: adjacency[tileId], difficultyLevel, isTestOnly: true })),
   units: [
     { unitId: 'unit_a1', ownerPlayerId: 'playerA', currentTileId: 't_a_home', level: 1, developmentPoints: 0, status: 'active', roundAvailability: 'available' },
     { unitId: 'unit_a2', ownerPlayerId: 'playerA', currentTileId: 't_block_a', level: 1, developmentPoints: 0, status: 'active', roundAvailability: 'available' },
